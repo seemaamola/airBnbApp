@@ -1,27 +1,28 @@
 package com.Seema.airBnbApp.advice;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
-public class ApiResponse {
+public class ApiErrorResponse<T> {
 
     private LocalDateTime timeStamp;
     private T data;
     private ApiError error;
 
-    public ApiResponse(){this.timeStamp=LocalDateTime.now();}
+    public ApiErrorResponse() {
+        this.timeStamp = LocalDateTime.now();
+    }
 
-    public ApiResponse(T data){
+    public ApiErrorResponse(T data) {
         this();
         this.data = data;
     }
 
-    public ApiResponse(ApiError error)
-    {
+    public ApiErrorResponse(ApiError error) {
         this();
-        this.error=error;
+        this.error = error;
     }
-
 }

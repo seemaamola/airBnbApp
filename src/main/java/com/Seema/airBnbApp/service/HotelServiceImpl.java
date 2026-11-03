@@ -3,8 +3,10 @@ package com.Seema.airBnbApp.service;
 import com.Seema.airBnbApp.config.MapperConfig;
 import com.Seema.airBnbApp.dto.HotelDto;
 import com.Seema.airBnbApp.entity.Hotel;
+import com.Seema.airBnbApp.entity.Room;
 import com.Seema.airBnbApp.exception.ResourceNotFoundException;
 import com.Seema.airBnbApp.repository.HotelReposotory;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -20,6 +22,8 @@ public class HotelServiceImpl implements HotelService {
 
     private final HotelReposotory hotelReposotory;
     private final ModelMapper modelMapper;
+    private final InventoryService inventoryService;
+    private final RoomService roomService;
 
     @Override
     public HotelDto createNewHotel(HotelDto hotelDto) {
@@ -56,13 +60,37 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public Boolean deleteHotelById(Long id) {
-        boolean exists = hotelReposotory.existsById(id);
-        if(!exists) throw new ResourceNotFoundException("Hotel not found with ID: "+id);
+    @Transactional
+    public void deleteHotelById(Long id) {
+        Hotel hotel = hotelReposotory
+                .findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("Hotel not found with ID: "+id));
+        hotel.setActive(true);
 
         hotelReposotory.deleteById(id);
-        //TODO: delete the future inventories for this hotel
-        return true;
+        for(Room room: hotel.getRooms())
+        {
+            inventoryService.deleteFutureInventories(room);
+        }
+
+    }
+
+    @Override
+    @Transactional
+    public void activateHotel(Long hotelId) {
+        log.info("Getting the hotel with id: {}",hotelId);
+        Hotel hotel = hotelReposotory
+                .findById(hotelId)
+                .orElseThrow(()-> new ResourceNotFoundException("Hotel not found with ID: "+hotelId));
+        hotel.setActive(true);
+
+        //assuming only do it once
+        for (Room room : hotel.getRooms())
+        {
+            inventoryService.initializeRoomForAYear(room);
+        }
+
+
     }
 
     @Override

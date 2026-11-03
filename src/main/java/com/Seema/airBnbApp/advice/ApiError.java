@@ -1,16 +1,24 @@
 package com.Seema.airBnbApp.advice;
 
-import lombok.Builder;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
-@Builder
 public class ApiError {
 
-    private HttpStatus status;
-    private String message;
-    private List<String> subErrors;
+    private LocalDateTime timeStamp;
+    private String error;
+    private HttpStatus statusCode;
+
+    public ApiError() {
+        this.timeStamp = LocalDateTime.now();
+    }
+
+    public ApiError(String error, HttpStatus statusCode) {
+        this();
+        this.error = error;
+        this.statusCode = statusCode;
+    }
 }

@@ -36,7 +36,7 @@ public class Room {
     private String[] photos;
 
     @Column(columnDefinition = "TEXT[]")
-    private String amenities;
+    private String[] amenities;
 
     @Column(nullable = false)
     private Integer totalCount;

@@ -1,10 +1,7 @@
 package com.Seema.airBnbApp.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
@@ -23,6 +20,7 @@ import java.time.LocalDateTime;
         columnNames = {"hotel_id","room_id","date" }
 ))
 
+@Builder
 public class Inventory {
 
     @Id
